@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Dashboard - SBS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1f2937, #374151);
+            color: #e5e7eb;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #111827, #1e40af);
+            color: #ffffff;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            transition: filter 0.3s ease;
+        }
+
+        .container.blur {
+            filter: blur(5px);
+        }
+
+        .card {
+            background: #1f2937;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #3b82f6, #10b981);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p {
+            color: #d1d5db;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #3b82f6, #2563eb);
+            color: #ffffff;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: linear-gradient(to right, #2563eb, #1e40af);
+            transform: scale(1.05);
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #374151;
+            color: #e5e7eb;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: #dc2626;
+        }
+
+        .balance {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        .transaction-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 80vh;
+            background: #1f2937;
+            border-radius: 16px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            padding: 2rem;
+            z-index: 100;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-in;
+            display: none;
+        }
+
+        .transaction-card.active {
+            display: block;
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #4b5563;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        .transaction-table th {
+            background: #374151;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .transaction-table td {
+            word-break: break-word;
+        }
+
+        .transaction-table tr:hover {
+            background: #2d3748;
+        }
+
+        .transaction-table th:nth-child(1) { width: 5%; }
+        .transaction-table th:nth-child(2) { width: 15%; }
+        .transaction-table th:nth-child(3) { width: 15%; }
+        .transaction-table th:nth-child(4) { width: 15%; }
+        .transaction-table th:nth-child(5) { width: 10%; }
+        .transaction-table th:nth-child(6) { width: 15%; }
+        .transaction-table th:nth-child(7) { width: 10%; }
+        .transaction-table th:nth-child(8) { width: 15%; }
+
+        .close-btn {
+            background: #dc2626;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .email-btn {
+            background: linear-gradient(to right, #10b981, #059669);
+            margin-top: 1rem;
+        }
+
+        .chart-btn {
+            background: linear-gradient(to right, #8b5cf6, #6d28d9);
+            margin-top: 1rem;
+            margin-left: 1rem;
+        }
+
+        #transactionChart {
+            max-height: 300px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translate(-50%, -60%); }
+            100% { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+
+            .navbar h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .transaction-table {
+                font-size: 0.8rem;
+            }
+
+            .transaction-table th,
+            .transaction-table td {
+                padding: 0.5rem;
+            }
+
+            .transaction-table th:nth-child(1) { width: 8%; }
+            .transaction-table th:nth-child(2) { width: 20%; }
+            .transaction-table th:nth-child(3) { width: 20%; }
+            .transaction-table th:nth-child(4) { width: 20%; }
+            .transaction-table th:nth-child(5) { width: 12%; }
+            .transaction-table th:nth-child(6) { width: 20%; }
+            .transaction-table th:nth-child(7) { width: 12%; }
+            .transaction-table th:nth-child(8) { width: 18%; }
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <h1>Welcome to SBS - Customer Dashboard</h1>
+    <button class="btn logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </button>
+</div>
+
+<div class="container" id="mainContainer">
+    <div class="card">
+        <h2><i class="fas fa-user-circle"></i> Account Details</h2>
+        <p><strong>Account Number:</strong> <span id="accountNumber"></span></p>
+        <p><strong>Name:</strong> <span id="name"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+        <p><strong>Phone:</strong> <span id="phone"></span></p>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-wallet"></i> Current Balance</h2>
+        <p><strong>₹</strong> <span id="balance" class="balance">Loading...</span></p>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-bolt"></i> Quick Actions</h2>
+        <input type="number" id="amount" placeholder="Amount (₹)" />
+        <button class="btn" onclick="deposit()"><i class="fas fa-plus-circle"></i> Deposit</button>
+        <button class="btn" onclick="withdraw()"><i class="fas fa-minus-circle"></i> Withdraw</button>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-exchange-alt"></i> Transfer Funds</h2>
+        <input type="text" id="toAccount" placeholder="To Account Number" />
+        <input type="number" id="transferAmount" placeholder="Amount (₹)" />
+        <button class="btn" onclick="transfer()"><i class="fas fa-paper-plane"></i> Transfer</button>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-file-invoice-dollar"></i> Mini Statement</h2>
+        <input type="date" id="fromDate" placeholder="From Date" />
+        <input type="date" id="toDate" placeholder="To Date" />
+        <button class="btn" onclick="fetchMiniStatement()"><i class="fas fa-search"></i> Fetch Transactions</button>
+        <ul id="miniStatement" class="text-sm space-y-2 mt-2 text-gray-300"></ul>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-clock"></i> Schedule Transaction</h2>
+        <input type="text" id="scheduleFromAccount" placeholder="From Account" readonly />
+        <input type="text" id="scheduleToAccount" placeholder="To Account Number" />
+        <input type="number" id="scheduleAmount" placeholder="Amount (₹)" />
+        <input type="datetime-local" id="scheduleDate" placeholder="Scheduled Date" />
+        <button class="btn" onclick="scheduleTransaction()"><i class="fas fa-calendar-plus"></i> Schedule</button>
+    </div>
+
+    <div class="card">
+        <h2><i class="fas fa-phone-alt"></i> Transfer by Phone</h2>
+        <input type="text" id="recipientPhone" placeholder="Recipient Phone Number" />
+        <button class="btn" onclick="verifyRecipient()"><i class="fas fa-user-check"></i> Verify Recipient</button>
+        <p><strong>Recipient Name:</strong> <span id="recipientName">-</span></p>
+        <p><strong>Recipient Account:</strong> <span id="recipientAccount">-</span></p>
+        <input type="number" id="phoneTransferAmount" placeholder="Amount (₹)" />
+        <button class="btn" onclick="transferByPhone()"><i class="fas fa-paper-plane"></i> Transfer by Phone</button>
+    </div>
+</div>
+
+<div class="transaction-card" id="transactionCard">
+    <button class="btn close-btn" onclick="closeTransactionCard()">
+        <i class="fas fa-times"></i> Close
+    </button>
+    <h2><i class="fas fa-file-invoice-dollar"></i> Transaction History</h2>
+    <table class="transaction-table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Transaction ID</th>
+            <th>From Account</th>
+            <th>To Account</th>
+            <th>Amount (₹)</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody id="transactionTableBody"></tbody>
+    </table>
+    <button class="btn email-btn" onclick="emailTransactionHistory()">
+        <i class="fas fa-envelope"></i> Send to Email
+    </button>
+    <button class="btn chart-btn" onclick="toggleChartType()">
+        <i class="fas fa-chart-pie"></i> Toggle Chart
+    </button>
+    <canvas id="transactionChart"></canvas>
+</div>
+<script>
+    const role = localStorage.getItem("role");
+    const auth = localStorage.getItem("auth");
+
+    if (!auth || role !== "customer") {
+        window.location.href = "index.html";
+    }
+
+    let chartInstance = null;
+    let currentChartType = 0; // 0: Pie, 1: Bar, 2: Histogram
+    const chartTypes = ['pie', 'bar', 'line'];
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = "index.html";
+    }
+
+    async function initCustomerDashboard() {
+        const phone = localStorage.getItem("phone");
+        const password = localStorage.getItem("password");
+
+        if (!phone || !password) {
+            console.warn("Phone or password not found in localStorage");
+            window.location.href = "index.html";
+            return;
+        }
+
+        const base64Auth = btoa(`${phone}:${password}`);
+        localStorage.setItem("auth", base64Auth);
+
+        try {
+            const accResponse = await fetch("http://localhost:8080/api/customers/account-number", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Basic ${base64Auth}`
+                },
+                body: JSON.stringify({
+                    phoneNumber: phone,
+                    password: password
+                })
+            });
+
+            const text = await accResponse.text();
+            console.log("📦 Raw Response Text:", text);
+
+            let accData;
+            try {
+                accData = JSON.parse(text);
+            } catch (err) {
+                console.error("❌ Failed to parse JSON:", err);
+                alert("Invalid response format from server.");
+                window.location.href = "index.html";
+                return;
+            }
+
+            console.log("✅ Parsed JSON:", accData);
+
+            if (!accData.accountNumber) {
+                console.error("❌ accountNumber missing in parsed JSON!");
+                alert(accData.error || "Account number not found!");
+                window.location.href = "index.html";
+                return;
+            }
+
+            const accNum = accData.accountNumber;
+            localStorage.setItem("accountNumber", accNum);
+            loadCustomerDetails(accNum);
+            loadScheduleFromAccount();
+        } catch (error) {
+            console.error("❌ Error during account number fetch:", error);
+            alert("Error connecting to the server.");
+            window.location.href = "index.html";
+        }
+    }
+
+    function loadCustomerDetails(accNum) {
+        const auth = localStorage.getItem("auth");
+
+        fetch(`http://localhost:8080/api/customers/${accNum}/details`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Basic ${auth}`
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log("✅ Customer details:", data);
+            if (data.bankAccountNumber) document.getElementById("accountNumber").textContent = data.bankAccountNumber;
+            if (data.phoneNumber) document.getElementById("phone").textContent = data.phoneNumber;
+            if (data.name) document.getElementById("name").textContent = data.name;
+            if (data.email) document.getElementById("email").textContent = data.email;
+        })
+        .catch(error => {
+            console.error("❌ Error fetching personal details:", error);
+            alert("Failed to load personal details");
+        });
+
+        fetch(`http://localhost:8080/api/customers/balance/${accNum}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Basic ${auth}`
+            }
+        })
+        .then(res => res.json())
+        .then(balance => {
+            console.log("✅ Balance response:", balance);
+            const balValue = typeof balance === "object" ? balance.balance : balance;
+            document.getElementById("balance").textContent = balValue ?? "N/A";
+        })
+        .catch(error => {
+            console.error("❌ Error fetching balance:", error);
+            alert("Failed to fetch balance");
+        });
+    }
+
+    function deposit() {
+        const amount = parseFloat(document.getElementById("amount").value);
+        fetch("http://localhost:8080/api/customers/deposit", {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${localStorage.getItem("auth")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                accountNumber: localStorage.getItem("accountNumber"),
+                amount: amount
+            })
+        })
+        .then(res => res.text())
+        .then(alert)
+        .then(() => location.reload());
+    }
+
+    function withdraw() {
+        const amount = parseFloat(document.getElementById("amount").value);
+        fetch("http://localhost:8080/api/customers/withdraw", {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${localStorage.getItem("auth")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                accountNumber: localStorage.getItem("accountNumber"),
+                amount: amount
+            })
+        })
+        .then(res => res.text())
+        .then(alert)
+        .then(() => location.reload());
+    }
+
+    function transfer() {
+        fetch("http://localhost:8080/api/customers/transfer", {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${localStorage.getItem("auth")}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                fromAccount: localStorage.getItem("accountNumber"),
+                toAccount: document.getElementById("toAccount").value,
+                amount: parseFloat(document.getElementById("transferAmount").value)
+            })
+        })
+        .then(res => res.json())
+        .then(invoice => {
+            if (invoice.transactionId) {
+                alert(`Transfer successful! Transaction ID: ${invoice.transactionId}`);
+                location.reload();
+            } else {
+                alert(invoice);
+            }
+        });
+    }
+
+    async function verifyRecipient() {
+        const phoneNumber = document.getElementById("recipientPhone").value;
+        if (!phoneNumber) {
+            alert("Please enter a recipient phone number.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/api/customers/verify-recipient", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Basic ${localStorage.getItem("auth")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    phoneNumber: phoneNumber
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                alert(errorText || "Failed to verify recipient.");
+                document.getElementById("recipientName").textContent = "-";
+                document.getElementById("recipientAccount").textContent = "-";
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById("recipientName").textContent = data.name || "-";
+            document.getElementById("recipientAccount").textContent = data.accountNumber || "-";
+        } catch (error) {
+            console.error("❌ Error verifying recipient:", error);
+            alert("Error verifying recipient: " + error.message);
+            document.getElementById("recipientName").textContent = "-";
+            document.getElementById("recipientAccount").textContent = "-";
+        }
+    }
+
+    async function transferByPhone() {
+        const recipientPhone = document.getElementById("recipientPhone").value;
+        const amount = parseFloat(document.getElementById("phoneTransferAmount").value);
+
+        if (!recipientPhone || !amount) {
+            alert("Please enter both recipient phone number and amount.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/api/customers/transfer-by-phone", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Basic ${localStorage.getItem("auth")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    recipientPhoneNumber: recipientPhone,
+                    amount: amount
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                alert(errorText || "Failed to transfer funds.");
+                return;
+            }
+
+            const invoice = await response.json();
+            if (invoice.transactionId) {
+                alert(`Transfer successful! Transaction ID: ${invoice.transactionId}`);
+                document.getElementById("recipientPhone").value = "";
+                document.getElementById("phoneTransferAmount").value = "";
+                document.getElementById("recipientName").textContent = "-";
+                document.getElementById("recipientAccount").textContent = "-";
+                location.reload();
+            } else {
+                alert(invoice.message || "Transfer failed.");
+            }
+        } catch (error) {
+            console.error("❌ Error transferring by phone:", error);
+            alert("Error transferring funds: " + error.message);
+        }
+    }
+
+    function fetchMiniStatement() {
+        const accNum = localStorage.getItem("accountNumber");
+        const auth = localStorage.getItem("auth");
+        const fromDate = document.getElementById("fromDate").value;
+        const toDate = document.getElementById("toDate").value;
+
+        if (!fromDate || !toDate) {
+            alert("Please select both From Date and To Date.");
+            return;
+        }
+
+        fetch("http://localhost:8080/api/transactions/mini-statement", {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${auth}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                accountNumber: accNum,
+                fromDate: fromDate,
+                toDate: toDate
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const tableBody = document.getElementById("transactionTableBody");
+            tableBody.innerHTML = "";
+
+            if (!Array.isArray(data) || data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No transactions found.</td></tr>';
+                showTransactionCard();
+                document.getElementById("transactionChart").style.display = "none";
+                return;
+            }
+
+            data.forEach(tx => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${tx.id || '-'}</td>
+                    <td>${tx.transactionId || '-'}</td>
+                    <td>${tx.fromAccount || '-'}</td>
+                    <td>${tx.toAccount || '-'}</td>
+                    <td>₹${tx.amount ? tx.amount.toFixed(2) : '-'}</td>
+                    <td>${tx.date || '-'}</td>
+                    <td>${tx.type || '-'}</td>
+                    <td>${tx.status || '-'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            renderChart(data);
+            showTransactionCard();
+        })
+        .catch(error => {
+            console.error("❌ Error fetching mini statement:", error);
+            alert("Failed to fetch mini statement");
+        });
+    }
+
+    function showTransactionCard() {
+        document.getElementById("transactionCard").classList.add("active");
+        document.getElementById("mainContainer").classList.add("blur");
+    }
+
+    function closeTransactionCard() {
+        document.getElementById("transactionCard").classList.remove("active");
+        document.getElementById("mainContainer").classList.remove("blur");
+        document.getElementById("transactionChart").style.display = "none";
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+    }
+
+    function loadScheduleFromAccount() {
+        const accNum = localStorage.getItem("accountNumber");
+        if (accNum) {
+            document.getElementById("scheduleFromAccount").value = accNum;
+        }
+    }
+
+    async function scheduleTransaction() {
+        const fromAccount = document.getElementById("scheduleFromAccount").value;
+        const toAccount = document.getElementById("scheduleToAccount").value;
+        const amount = parseFloat(document.getElementById("scheduleAmount").value);
+        const scheduledDateInput = document.getElementById("scheduleDate").value;
+
+        if (!toAccount || !amount || !scheduledDateInput) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        const date = new Date(scheduledDateInput);
+        const formattedDate = date.toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        }).replace(/,/, '').replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$1-$2');
+
+        const payload = {
+            fromAccount: fromAccount,
+            toAccount: toAccount,
+            amount: amount,
+            scheduledDate: formattedDate
+        };
+
+        console.log("📤 Sending payload:", JSON.stringify(payload, null, 2));
+
+        try {
+            const response = await fetch("http://localhost:8080/api/scheduled/create", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Basic ${localStorage.getItem("auth")}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            console.log("📥 Response status:", response.status, "Status text:", response.statusText);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("❌ Error response:", errorText);
+                throw new Error(errorText || "Failed to schedule transaction");
+            }
+
+            const result = await response.json();
+            console.log("✅ Response data:", result);
+
+            if (result && result.id) {
+                alert(`Transaction scheduled successfully! ID: ${result.id}`);
+            } else {
+                console.warn("⚠️ No ID in response:", result);
+                alert("Transaction scheduled, but no ID returned by server.");
+            }
+
+            document.getElementById("scheduleToAccount").value = "";
+            document.getElementById("scheduleAmount").value = "";
+            document.getElementById("scheduleDate").value = "";
+        } catch (error) {
+            console.error("❌ Error scheduling transaction:", error);
+            alert(`Error scheduling transaction: ${error.message}`);
+        }
+    }
+
+    async function emailTransactionHistory() {
+        const accNum = localStorage.getItem("accountNumber");
+        const auth = localStorage.getItem("auth");
+        const email = document.getElementById("email").textContent;
+        const fromDate = document.getElementById("fromDate").value;
+        const toDate = document.getElementById("toDate").value;
+
+        if (!email) {
+            alert("Email address not found. Please ensure account details are loaded.");
+            return;
+        }
+
+        if (!fromDate || !toDate) {
+            alert("Please select both From Date and To Date.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/api/transactions/mini-statement", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Basic ${auth}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    accountNumber: accNum,
+                    fromDate: fromDate,
+                    toDate: toDate
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch transaction history");
+            }
+
+            const transactions = await response.json();
+
+            if (!Array.isArray(transactions) || transactions.length === 0) {
+                alert("No transactions found for the selected date range.");
+                return;
+            }
+
+            const headers = ["ID", "Transaction ID", "From Account", "To Account", "Amount (₹)", "Date", "Type", "Status"];
+            const csvRows = [
+                headers.join(","), // CSV header
+                ...transactions.map(tx => [
+                    tx.id || "-",
+                    tx.transactionId || "-",
+                    tx.fromAccount || "-",
+                    tx.toAccount || "-",
+                    tx.amount ? tx.amount.toFixed(2) : "-",
+                    tx.date || "-",
+                    tx.type || "-",
+                    tx.status || "-"
+                ].map(field => `"${field}"`).join(",")) // Wrap fields in quotes to handle commas
+            ];
+            const csvContent = csvRows.join("\n");
+
+            const emailResponse = await fetch("http://localhost:8080/api/customers/email-transaction-history", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Basic ${auth}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    accountNumber: accNum,
+                    email: email,
+                    csvContent: csvContent,
+                    fromDate: fromDate,
+                    toDate: toDate
+                })
+            });
+
+            if (!emailResponse.ok) {
+                throw new Error("Failed to send email");
+            }
+
+            const result = await emailResponse.json();
+            alert(result.message || "Transaction history emailed successfully!");
+        } catch (error) {
+            console.error("❌ Error emailing transaction history:", error);
+            alert(`Error emailing transaction history: ${error.message}`);
+        }
+    }
+
+    function renderChart(transactions) {
+        const ctx = document.getElementById("transactionChart").getContext("2d");
+        document.getElementById("transactionChart").style.display = "block";
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        // Aggregate data by transaction type
+        const typeCounts = transactions.reduce((acc, tx) => {
+            const type = tx.type || 'Unknown';
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+        }, {});
+
+        const labels = Object.keys(typeCounts);
+        const data = Object.values(typeCounts);
+
+        // For histogram, use amount distribution
+        const amounts = transactions.map(tx => tx.amount || 0);
+        const bins = [0, 1000, 5000, 10000, 50000, Infinity];
+        const histogramData = bins.slice(0, -1).map((bin, i) => {
+            return amounts.filter(amount => amount >= bin && amount < bins[i + 1]).length;
+        });
+
+        const chartType = chartTypes[currentChartType];
+        let chartConfig;
+
+        if (chartType === 'pie') {
+            chartConfig = {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                        borderColor: '#1f2937',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top', labels: { color: '#e5e7eb' } },
+                        title: {
+                            display: true,
+                            text: 'Transactions by Type',
+                            color: '#e5e7eb',
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            };
+        } else if (chartType === 'bar') {
+            chartConfig = {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Transactions',
+                        data: data,
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#2563eb',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#e5e7eb' },
+                            grid: { color: '#4b5563' }
+                        },
+                        x: {
+                            ticks: { color: '#e5e7eb' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#e5e7eb' } },
+                        title: {
+                            display: true,
+                            text: 'Transactions by Type',
+                            color: '#e5e7eb',
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            };
+        } else if (chartType === 'line') { // Using line for histogram
+            chartConfig = {
+                type: 'line',
+                data: {
+                    labels: bins.slice(0, -1).map((bin, i) => `${bin}-${bins[i + 1] === Infinity ? '∞' : bins[i + 1]}`),
+                    datasets: [{
+                        label: 'Transaction Amount Distribution',
+                        data: histogramData,
+                        fill: true,
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#e5e7eb' },
+                            grid: { color: '#4b5563' }
+                        },
+                        x: {
+                            ticks: { color: '#e5e7eb' },
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#e5e7eb' } },
+                        title: {
+                            display: true,
+                            text: 'Transaction Amount Histogram',
+                            color: '#e5e7eb',
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            };
+        }
+
+        chartInstance = new Chart(ctx, chartConfig);
+    }
+
+    function toggleChartType() {
+        const transactions = Array.from(document.getElementById("transactionTableBody").children).map(row => {
+            return {
+                id: row.children[0].textContent,
+                transactionId: row.children[1].textContent,
+                fromAccount: row.children[2].textContent,
+                toAccount: row.children[3].textContent,
+                amount: parseFloat(row.children[4].textContent.replace('₹', '')) || 0,
+                date: row.children[5].textContent,
+                type: row.children[6].textContent,
+                status: row.children[7].textContent
+            };
+        });
+
+        if (transactions.length === 0) {
+            alert("No transactions to display in chart.");
+            return;
+        }
+
+        currentChartType = (currentChartType + 1) % chartTypes.length;
+        renderChart(transactions);
+    }
+
+    window.onload = initCustomerDashboard;
+</script>
+</body>
+</html>

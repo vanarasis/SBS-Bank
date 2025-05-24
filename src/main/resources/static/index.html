@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SBS Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+          height: 100vh;
+          background: linear-gradient(-45deg, #3f51b1 0%, #5a55ae 13%, #7b5fac 25%, #8f6aae 38%, #a86aa4 50%, #cc6b8e 62%, #f18271 75%, #f3a469 87%, #f7c978 100%);
+          background-size: 400% 400%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          animation: gradientBG 15s ease infinite;
+          perspective: 1000px;
+        }
+
+        @keyframes gradientBG {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .container {
+          display: flex;
+          flex-direction: row;
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border-radius: 24px;
+          box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+          overflow: hidden;
+          max-width: 1000px;
+          width: 90%;
+          transform-style: preserve-3d;
+          animation: float 6s ease-in-out infinite;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0) rotateY(0deg); }
+          50% { transform: translateY(-20px) rotateY(2deg); }
+        }
+
+        .illustration {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.1);
+          padding: 40px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .illustration::before {
+          content: '';
+          position: absolute;
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+          border-radius: 50%;
+          top: -100px;
+          right: -100px;
+        }
+
+        .illustration::after {
+          content: '';
+          position: absolute;
+          width: 200px;
+          height: 200px;
+          background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+          border-radius: 50%;
+          bottom: -50px;
+          left: -50px;
+        }
+
+        .illustration img {
+          max-width: 100%;
+          height: auto;
+          filter: drop-shadow(0 10px 20px rgba(0,0,0,0.2));
+          transition: transform 0.5s ease;
+          z-index: 2;
+        }
+
+        .illustration:hover img {
+          transform: scale(1.05) translateY(-10px);
+        }
+
+        section {
+          flex: 1;
+          padding: 50px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          position: relative;
+        }
+
+        h2 {
+          color: #fff;
+          text-align: center;
+          margin-bottom: 30px;
+          font-size: 2.2rem;
+          font-weight: 700;
+          text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+          position: relative;
+        }
+
+        h2::after {
+          content: '';
+          position: absolute;
+          bottom: -10px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 50px;
+          height: 3px;
+          background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #ffffff 50%, rgba(255,255,255,0) 100%);
+          border-radius: 3px;
+        }
+
+        .input-group {
+          position: relative;
+          margin: 15px 0;
+        }
+
+        .input-group i {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #764ba2;
+          z-index: 2;
+        }
+
+        input, select {
+          width: 100%;
+          padding: 15px 15px 15px 45px;
+          margin: 5px 0;
+          border: none;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.9);
+          font-size: 16px;
+          transition: all 0.3s ease;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+          color: #333;
+          font-weight: 500;
+        }
+
+        input:focus, select:focus {
+          outline: none;
+          background: #fff;
+          box-shadow: 0 0 0 2px rgba(118, 75, 162, 0.3), 0 8px 25px rgba(0,0,0,0.1);
+          transform: translateY(-2px);
+        }
+
+        select {
+          appearance: none;
+          -webkit-appearance: none;
+          background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23764ba2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+          background-repeat: no-repeat;
+          background-position: right 15px center;
+          background-size: 15px;
+        }
+
+        .btn-group {
+          display: flex;
+          gap: 15px;
+          margin-top: 25px;
+        }
+
+        button {
+          flex: 1;
+          padding: 15px;
+          border: none;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #ffffff 0%, #f7f7f7 100%);
+          color: #764ba2;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.4s ease;
+          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+          transition: 0.5s;
+        }
+
+        button:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+          color: #5a3d8a;
+        }
+
+        button:hover::before {
+          left: 100%;
+        }
+
+        button:active {
+          transform: translateY(1px);
+        }
+
+        button.primary {
+          background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+          color: white;
+        }
+
+        button.primary:hover {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        #loginStatus, #redirectingStatus {
+          margin-top: 15px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          text-align: center;
+        }
+
+        #loginStatus {
+          color: #ff6b6b;
+        }
+
+        #redirectingStatus {
+          color: #51cf66;
+        }
+
+        .particles {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .particle {
+          position: absolute;
+          background: rgba(255,255,255,0.6);
+          border-radius: 50%;
+          animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+          .container {
+            flex-direction: column;
+            width: 95%;
+          }
+
+          .illustration {
+            padding: 30px;
+          }
+
+          .illustration img {
+            max-height: 200px;
+          }
+
+          section {
+            padding: 30px;
+          }
+
+          h2 {
+            font-size: 1.8rem;
+          }
+
+          .btn-group {
+            flex-direction: column;
+          }
+        }
+    </style>
+</head>
+<body>
+<div class="container animate__animated animate__fadeIn">
+    <div class="illustration">
+        <img src="http://localhost:8080/images/login.svg" alt="Login Illustration" class="animate__animated animate__fadeInLeft"/>
+    </div>
+    <section class="animate__animated animate__fadeInRight">
+        <div class="particles" id="particles"></div>
+        <h2>Welcome to SBS</h2>
+
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="Username" required />
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Password" required />
+        </div>
+
+        <div class="input-group">
+            <i class="fas fa-user-tag"></i>
+            <select id="role">
+                <option value="admin">Admin</option>
+                <option value="customer">Customer</option>
+            </select>
+        </div>
+
+        <div class="btn-group">
+            <button class="primary" onclick="login()">
+                <span>Login</span>
+            </button>
+            <button onclick="back()">
+                <span>Go Back</span>
+            </button>
+        </div>
+
+        <p id="loginStatus"></p>
+        <p id="redirectingStatus"></p>
+    </section>
+</div>
+
+<!-- Font Awesome for icons -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script>
+    // Create floating particles
+    function createParticles() {
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            // Random properties
+            const size = Math.random() * 5 + 2;
+            const posX = Math.random() * 100;
+            const duration = Math.random() * 20 + 10;
+            const delay = Math.random() * 10;
+
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${posX}%`;
+            particle.style.bottom = `-${size}px`;
+            particle.style.animationDuration = `${duration}s`;
+            particle.style.animationDelay = `${delay}s`;
+
+            particlesContainer.appendChild(particle);
+        }
+    }
+
+    // Initialize particles when page loads
+    window.addEventListener('load', createParticles);
+
+    // Add ripple effect to buttons
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const x = e.clientX - e.target.getBoundingClientRect().left;
+            const y = e.clientY - e.target.getBoundingClientRect().top;
+
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+
+            this.appendChild(ripple);
+
+            setTimeout(() => {
+                ripple.remove();
+            }, 1000);
+        });
+    });
+
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const role = document.getElementById("role").value;
+
+      document.getElementById("loginStatus").textContent = "";
+      document.getElementById("redirectingStatus").textContent = "";
+
+      if (!username || !password) {
+        document.getElementById("loginStatus").textContent = "Please fill in all fields.";
+        document.getElementById("loginStatus").classList.add('animate__animated', 'animate__headShake');
+        setTimeout(() => {
+            document.getElementById("loginStatus").classList.remove('animate__animated', 'animate__headShake');
+        }, 1000);
+        return;
+      }
+
+      const credentials = btoa(`${username}:${password}`);
+
+      // Add loading animation
+      const loginBtn = document.querySelector('.primary');
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing';
+      loginBtn.disabled = true;
+
+      if (role === "admin") {
+        fetch("http://localhost:8080/api/admins/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        })
+        .then(res => {
+          if (!res.ok) throw new Error("Admin login failed");
+          return res.text();
+        })
+        .then(responseText => {
+          if (responseText.trim() === "Login successful") {
+            localStorage.setItem("auth", credentials);
+            localStorage.setItem("role", "admin");
+            localStorage.setItem("username", username);
+
+            document.getElementById("redirectingStatus").textContent = "Login successful! Redirecting...";
+            document.getElementById("redirectingStatus").classList.add('animate__animated', 'animate__fadeIn');
+
+            // Success animation
+            document.querySelector('.container').classList.add('animate__animated', 'animate__zoomOut');
+
+            setTimeout(() => window.location.href = "AdminDashboard.html", 1500);
+          } else {
+            throw new Error("Unexpected response");
+          }
+        })
+        .catch(() => {
+          document.getElementById("loginStatus").textContent = "Invalid admin credentials.";
+          document.getElementById("loginStatus").classList.add('animate__animated', 'animate__shakeX');
+          loginBtn.innerHTML = '<span>Login</span>';
+          loginBtn.disabled = false;
+          setTimeout(() => {
+            document.getElementById("loginStatus").classList.remove('animate__animated', 'animate__shakeX');
+          }, 1000);
+        });
+
+      } else if (role === "customer") {
+        fetch("http://localhost:8080/api/customers/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phoneNumber: username, password })
+        })
+        .then(res => {
+          if (res.status === 200) {
+            return res.text();
+          } else {
+            throw new Error("Invalid phone number or password");
+          }
+        })
+        .then(responseText => {
+          if (responseText.trim().includes("Login successful")) {
+            localStorage.setItem("role", "customer");
+            localStorage.setItem("username", username);
+            localStorage.setItem("phone", username);
+            localStorage.setItem("password", password);
+            localStorage.setItem("auth", btoa(`${username}:${password}`));
+
+            document.getElementById("redirectingStatus").textContent = "Login successful! Redirecting...";
+            document.getElementById("redirectingStatus").classList.add('animate__animated', 'animate__fadeIn');
+
+            // Success animation
+            document.querySelector('.container').classList.add('animate__animated', 'animate__zoomOut');
+
+            setTimeout(() => window.location.href = "customerDashboard.html", 1500);
+          } else {
+            throw new Error("Invalid credentials");
+          }
+        })
+        .catch(error => {
+          document.getElementById("loginStatus").textContent = error.message;
+          document.getElementById("loginStatus").classList.add('animate__animated', 'animate__shakeX');
+          loginBtn.innerHTML = '<span>Login</span>';
+          loginBtn.disabled = false;
+          setTimeout(() => {
+            document.getElementById("loginStatus").classList.remove('animate__animated', 'animate__shakeX');
+          }, 1000);
+        });
+      }
+    }
+
+    function back() {
+      document.querySelector('.container').classList.add('animate__animated', 'animate__fadeOut');
+      setTimeout(() => window.location.href = "welcome.html", 800);
+    }
+</script>
+</body>
+</html>

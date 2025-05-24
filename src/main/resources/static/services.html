@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBS Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        :root {
+            --bg-color: #f3f4f6;
+            --text-color: #1f2937;
+        }
+        .dark {
+            --bg-color: #1f2937;
+            --text-color: #f9fafb;
+        }
+        html.dark, .dark body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #1e3a8a, #60a5fa);
+            position: relative;
+            overflow: hidden;
+        }
+        .dark .hero-bg {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .service-card {
+            transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.3s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+        .feature-icon {
+            transition: transform 0.3s ease;
+        }
+        .service-card:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .transaction-row {
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .transaction-row:hover {
+            background-color: #f1f5f9;
+            transform: translateX(5px);
+        }
+        .dark .transaction-row:hover {
+            background-color: #374151;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in-delay-1 { animation-delay: 0.2s; }
+        .fade-in-delay-2 { animation-delay: 0.4s; }
+        .fade-in-delay-3 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body class="bg-gray-50">
+<!-- Header -->
+<header class="bg-white shadow-lg dark:bg-gray-800 dark:text-white fixed w-full z-10">
+    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center">
+            <img src="http://localhost:8080/images/bank.svg" alt="SBS Logo" class="h-14">
+            <h1 class="ml-4 text-2xl font-extrabold text-blue-900 dark:text-blue-300">SBS Online Banking</h1>
+        </div>
+        <nav class="hidden md:flex space-x-8">
+            <a href="welcome.html" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
+            <a href="services.html" class="text-blue-600 font-semibold dark:text-blue-400">Services</a>
+            <a href="contact.html" class="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact Us</a>
+            <div class="max-w-md mx-auto text-center fade-in">
+                <a href="index.html" class="login-btn bg-blue-700 text-white px-8 py-3 rounded-md font-semibold hover:bg-blue-800">Login to Your Account</a>
+            </div>
+        </nav>
+        <div class="flex items-center space-x-4">
+            <button id="theme-toggle" class="text-gray-700 dark:text-gray-300 focus:outline-none" aria-label="Toggle theme">
+                <svg id="sun-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <svg id="moon-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+            <button class="md:hidden text-blue-600 dark:text-blue-400 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero-bg text-white py-24 pt-32">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-6 fade-in">💼 Comprehensive Banking Solutions</h2>
+        <p class="text-xl md:text-2xl mb-8 fade-in fade-in-delay-1">Explore tailored financial services designed for your personal and business success.</p>
+        <a href="#services" class="bg-white text-blue-700 px-8 py-3 rounded-full font-semibold hover:bg-blue-100 transition-colors fade-in fade-in-delay-2">Discover Services</a>
+    </div>
+</section>
+
+<!-- Services Grid -->
+<section id="services" class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+        <h3 class="text-3xl md:text-4xl font-bold text-blue-900 dark:text-blue-300 fade-in">🌟 Our Premium Services</h3>
+        <p class="text-lg text-gray-700 dark:text-gray-300 mt-3 fade-in fade-in-delay-1">Innovative solutions to empower your financial journey.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Personal Banking -->
+        <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg fade-in">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full mr-4">
+                    <svg class="w-10 h-10 text-blue-700 dark:text-blue-300 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-semibold text-blue-700 dark:text-blue-300">Personal Banking</h4>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-3">
+                <li>Checking & Savings Accounts</li>
+                <li>Personal Loans & Credit Lines</li>
+                <li>Mortgage & Home Equity</li>
+                <li>Retirement Planning</li>
+                <li>Wealth Management</li>
+            </ul>
+        </div>
+
+        <!-- Business Banking -->
+        <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg fade-in fade-in-delay-1">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full mr-4">
+                    <svg class="w-10 h-10 text-blue-700 dark:text-blue-300 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-semibold text-blue-700 dark:text-blue-300">Business Banking</h4>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-3">
+                <li>Business Checking Accounts</li>
+                <li>Commercial Loans & Credit</li>
+                <li>Merchant Services</li>
+                <li>Payroll & Benefits</li>
+                <li>Business Credit Cards</li>
+            </ul>
+        </div>
+
+        <!-- Digital Banking -->
+        <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg fade-in fade-in-delay-2">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full mr-4">
+                    <svg class="w-10 h-10 text-blue-700 dark:text-blue-300 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-semibold text-blue-700 dark:text-blue-300">Digital Banking</h4>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-3">
+                <li>Mobile Banking App</li>
+                <li>Online Bill Pay</li>
+                <li>P2P Payments</li>
+                <li>Mobile Check Deposit</li>
+                <li>Digital Wallet</li>
+            </ul>
+        </div>
+
+        <!-- Investment Services -->
+        <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg fade-in">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full mr-4">
+                    <svg class="w-10 h-10 text-blue-700 dark:text-blue-300 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-semibold text-blue-700 dark:text-blue-300">Investment Services</h4>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-3">
+                <li>Financial Planning</li>
+                <li>Retirement Accounts</li>
+                <li>College Savings Plans</li>
+                <li>Brokerage Accounts</li>
+                <li>Wealth Management</li>
+            </ul>
+        </div>
+
+        <!-- Loan Services -->
+        <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg fade-in fade-in-delay-1">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full mr-4">
+                    <svg class="w-10 h-10 text-blue-700 dark:text-blue-300 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4H5z" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-semibold text-blue-700 dark:text-blue-300">Loan Services</h4>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-3">
+                <li>Auto Loans</li>
+                <li>Home Loans & Refinancing</li>
+                <li>Personal Credit Lines</li>
+                <li>Student Loans</li>
+                <li>Debt Consolidation</li>
+            </ul>
+        </div>
+
+        <!-- Security Services -->
+        <div class="service-card bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg fade-in fade-in-delay-2">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-full mr-4">
+                    <svg class="w-10 h-10 text-blue-700 dark:text-blue-300 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-semibold text-blue-700 dark:text-blue-300">Security Services</h4>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-3">
+                <li>Fraud Protection</li>
+                <li>Identity Theft Prevention</li>
+                <li>Secure Online Banking</li>
+                <li>Account Alerts</li>
+                <li>Biometric Authentication</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- Special Offers -->
+<section class="bg-blue-50 dark:bg-gray-800 py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-12">
+            <h3 class="text-3xl md:text-4xl font-bold text-blue-900 dark:text-blue-300 fade-in">🎁 Exclusive Offers</h3>
+            <p class="text-lg text-gray-700 dark:text-gray-300 mt-3 fade-in fade-in-delay-1">Unlock these limited-time promotions today!</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg border-l-4 border-yellow-400 fade-in">
+                <h4 class="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-3">New Account Bonus</h4>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Get $200 when you open a checking account with direct deposit.</p>
+                <a href="#" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">Learn More →</a>
+            </div>
+            <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg border-l-4 border-blue-400 fade-in fade-in-delay-1">
+                <h4 class="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-3">Low Mortgage Rates</h4>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Secure our lowest rates for home purchases or refinancing.</p>
+                <a href="#" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">Get a Quote →</a>
+            </div>
+            <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg border-l-4 border-green-400 fade-in fade-in-delay-2">
+                <h4 class="text-xl font-semibold text-blue-700 dark:text-blue-300 mb-3">Credit Card Rewards</h4>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Earn 3% cash back on purchases for the first 6 months.</p>
+                <a href="#" class="text-blue-600 dark:text-blue-400 font-medium hover:underline">Apply Now →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="container mx-auto px-4 py-16">
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl p-10 text-center fade-in">
+        <h3 class="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Banking?</h3>
+        <p class="text-lg mb-8">Join thousands who trust SBS for seamless financial solutions.</p>
+        <div class="flex flex-col sm:flex-row justify-center
+
+ gap-4">
+            <a href="index.html" class="bg-white text-blue-700 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors">Open an Account</a>
+            <a href="contact.html" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-700 transition-colors">Contact Us</a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-blue-900 dark:bg-gray-900 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h4 class="text-xl font-semibold mb-4">About SBS</h4>
+                <p class="text-gray-300">SBS delivers secure, innovative banking solutions tailored to your needs.</p>
+            </div>
+            <div>
+                <h4 class="text-xl font-semibold mb-4">Quick Links</h4>
+                <ul class="space-y-3 text-gray-300">
+                    <li><a href="index.html" class="hover:text-blue-400 transition-colors">Home</a></li>
+                    <li><a href="services.html" class="hover:text-blue-400 transition-colors">Services</a></li>
+                    <li><a href="about.html" class="hover:text-blue-400 transition-colors">About Us</a></li>
+                    <li><a href="contact.html" class="hover:text-blue-400 transition-colors">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xl font-semibold mb-4">Contact Us</h4>
+                <p class="text-gray-300">Email: support@sbsbank.com</p>
+                <p class="text-gray-300">Phone: 1-800-123-4567</p>
+                <p class="text-gray-300">Address: 123 SBS Street, Financial City</p>
+            </div>
+        </div>
+        <div class="mt-8 text-center text-gray-300">
+            <p>© 2025 SBS Bank. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+
+    // Function to apply theme
+    function applyTheme(isDark) {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        }
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    // Function to toggle theme
+    function toggleTheme() {
+        const isDark = !document.documentElement.classList.contains('dark');
+        applyTheme(isDark);
+    }
+
+    // Initialize theme based on localStorage or system preference
+    function initializeTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        applyTheme(isDark);
+    }
+
+    // Event listener for toggle button
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    // Initialize theme on page load
+    initializeTheme();
+
+    // Scroll-triggered animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('fade-in');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in, .service-card').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

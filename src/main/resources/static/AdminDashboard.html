@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+  <style>
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f8fafc, #e2e8f0);
+      color: #1e293b;
+      min-height: 100vh;
+      display: flex;
+      transition: all 0.3s ease;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background: linear-gradient(to right, #1e293b, #334155);
+      color: #e2e8f0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #ffffffdd;
+      backdrop-filter: blur(10px);
+      padding: 2rem 1.5rem;
+      border-right: 1px solid #e5e7eb;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    body.dark-mode .sidebar {
+      background: #1e293bdd;
+      border-right: 1px solid #475569;
+    }
+
+    .sidebar h1 {
+      font-size: 1.75rem;
+      color: #1d4ed8;
+      margin-bottom: 2rem;
+      font-weight: 700;
+    }
+
+    body.dark-mode .sidebar h1 {
+      color: #60a5fa;
+    }
+
+    .sidebar ul {
+      list-style: none;
+    }
+
+    .sidebar li {
+      margin-bottom: 1rem;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: #475569;
+      font-weight: 500;
+      display: block;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode .sidebar a {
+      color: #d1d5db;
+    }
+
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #e0f2fe;
+      color: #1d4ed8;
+    }
+
+    body.dark-mode .sidebar a:hover,
+    body.dark-mode .sidebar a.active {
+      background-color: #1e40af;
+      color: #e0f2fe;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 260px;
+      padding: 2rem;
+      flex: 1;
+      transition: margin-left 0.3s ease;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    body.dark-mode .header h2 {
+      color: #e2e8f0;
+    }
+
+    /* Mode Toggle Button */
+    .mode-toggle {
+      background: #1d4ed8;
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .mode-toggle:hover {
+      background: #2563eb;
+    }
+
+    body.dark-mode .mode-toggle {
+      background: #60a5fa;
+    }
+
+    body.dark-mode .mode-toggle:hover {
+      background: #93c5fd;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode .card {
+      background: rgba(30, 41, 59, 0.8);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .card:hover {
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #1e40af;
+    }
+
+    body.dark-mode .card h3 {
+      color: #60a5fa;
+    }
+
+    .card input,
+    .card select,
+    .card button {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #1e293b;
+      font-size: 1rem;
+    }
+
+    body.dark-mode .card input,
+    body.dark-mode .card select {
+      border: 1px solid #475569;
+      background: #2d3748;
+      color: #e2e8f0;
+    }
+
+    .card button {
+      background: #1d4ed8;
+      color: white;
+      font-weight: 600;
+      border: none;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode .card button {
+      background: #60a5fa;
+    }
+
+    .card button:hover {
+      background: #2563eb;
+    }
+
+    body.dark-mode .card button:hover {
+      background: #93c5fd;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      margin-top: 1rem;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    body.dark-mode table {
+      background: #2d3748;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    body.dark-mode th,
+    body.dark-mode td {
+      border-bottom: 1px solid #475569;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    body.dark-mode th {
+      background-color: #1e293b;
+      color: #e2e8f0;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    body.dark-mode tr:hover {
+      background: #374151;
+    }
+
+    /* Result Areas */
+    .result-box {
+      padding: 1rem;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 1rem;
+      color: #334155;
+    }
+
+    body.dark-mode .result-box {
+      background: #2d3748;
+      border: 1px solid #475569;
+      color: #d1d5db;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 90%;
+      max-height: 80vh;
+      overflow: auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      width: 800px;
+      min-width: 400px;
+      min-height: 300px;
+      max-width: 95vw;
+      max-height: 85vh;
+      resize: both;
+    }
+
+    body.dark-mode .modal-content {
+      background: rgba(30, 41, 59, 0.95);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #1e40af;
+    }
+
+    body.dark-mode .modal-content h2 {
+      color: #60a5fa;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #ff4d4f;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .close-button:hover {
+      background: #d9363e;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: absolute;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .header h2 {
+        font-size: 1.5rem;
+      }
+
+      .modal-content {
+        width: 95%;
+        padding: 1rem;
+        min-width: 300px;
+        min-height: 200px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Hamburger Menu -->
+<button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <h1>Admin Dashboard</h1>
+  <ul>
+    <li><a href="#viewCustomersSection" class="active">View All Customers</a></li>
+    <li><a href="#customerDetailsSection">Customer Details</a></li>
+    <li><a href="#balanceSection">Check Balance</a></li>
+    <li><a href="#transferSection">Transfer Money</a></li>
+    <li><a href="#depositSection">Deposit Money</a></li>
+    <li><a href="#updateCustomerSection">Update Customer</a></li>
+    <li><a href="#updateLimitSection">Update Daily Limit</a></li>
+    <li><a href="#createCustomerSection">Create Customer</a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <div class="header">
+    <h1>Welcome to the Admin Dashboard</h1>
+    <div>
+      <button id="modeToggle" class="mode-toggle" onclick="toggleMode()">Dark Mode</button>
+      <button id="logoutButton" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <section>
+    <!-- View All Customers Section -->
+    <div class="card section" id="viewCustomersSection">
+      <h2>View All Customers</h2>
+      <button onclick="fetchAllCustomers()">Fetch Customers</button>
+      <div id="customersResult"></div>
+    </div>
+
+    <!-- Customer Details Section -->
+    <div class="card section" id="customerDetailsSection">
+      <h2>Customer Details</h2>
+      <input type="text" id="accountNumber" placeholder="Enter account number" />
+      <button onclick="loadCustomerDetails()">Get Customer Details</button>
+      <div id="customerDetails"></div>
+    </div>
+
+    <!-- Balance Section -->
+    <div class="card section" id="balanceSection">
+      <h2>Check Customer Balance</h2>
+      <input type="text" id="balanceAccountNumber" placeholder="Enter account number" />
+      <button onclick="checkBalance()">Check Balance</button>
+      <div id="balanceResult"></div>
+    </div>
+
+    <!-- Transfer Section -->
+    <div class="card section" id="transferSection">
+      <h2>Transfer Money</h2>
+      <input type="text" id="fromAccount" placeholder="From Account" />
+      <input type="text" id="toAccount" placeholder="To Account" />
+      <input type="number" id="amount" placeholder="Amount" />
+      <button onclick="transferMoney()">Transfer Money</button>
+      <div id="transferResult"></div>
+    </div>
+
+    <!-- Deposit Section -->
+    <div class="card section" id="depositSection">
+      <h2>Deposit Money</h2>
+      <input type="text" id="depositAccountNumber" placeholder="Account Number" />
+      <input type="number" id="depositAmount" placeholder="Amount" />
+      <button onclick="depositMoney()">Deposit</button>
+      <div id="depositResult"></div>
+    </div>
+
+    <!-- Update Customer Details Section -->
+    <div class="card section" id="updateCustomerSection">
+      <h2>Update Customer Details</h2>
+      <input type="text" id="updateAccountNumber" placeholder="Account Number" />
+      <input type="text" id="updatedName" placeholder="Updated Name" />
+      <input type="text" id="updatedAddress" placeholder="Updated Address" />
+      <button onclick="updateCustomerDetails()">Update Details</button>
+      <div id="updateCustomerResult"></div>
+    </div>
+
+    <!-- Update Daily Limit Section -->
+    <div class="card section" id="updateLimitSection">
+      <h2>Update Daily Limit</h2>
+      <input type="text" id="limitAccountNumber" placeholder="Account Number" />
+      <input type="number" id="newDailyLimit" placeholder="New Daily Limit" />
+      <button onclick="updateDailyLimit()">Update Limit</button>
+      <div id="updateLimitResult"></div>
+    </div>
+
+    <!-- Create Customer Section -->
+    <div class="card section" id="createCustomerSection">
+      <h2>Create Customer Account</h2>
+      <input type="text" id="custName" placeholder="Full Name" />
+      <input type="email" id="custEmail" placeholder="Email" />
+      <input type="text" id="custPhone" placeholder="Phone Number" />
+      <input type="text" id="custAddress" placeholder="Address" />
+      <input type="text" id="custAccountNumber" placeholder="Bank Account Number" />
+      <input type="text" id="custIFSC" placeholder="IFSC Code" />
+      <select id="custAccountType">
+        <option value="SAVINGS">SAVINGS</option>
+        <option value="CURRENT">CURRENT</option>
+      </select>
+      <input type="password" id="custPassword" placeholder="Password" />
+      <input type="number" id="custBalance" placeholder="Initial Balance" min="0" step="0.01" />
+      <button onclick="createCustomer()">Create Customer</button>
+      <div id="createCustomerResult"></div>
+    </div>
+  </section>
+
+  <!-- Modal for Displaying Customers and Customer Details -->
+  <div class="modal" id="dataModal">
+    <div class="modal-content">
+      <button class="close-button" onclick="closeModal()">×</button>
+      <h2 id="modalTitle"></h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Load mode preference from localStorage on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedMode = localStorage.getItem('theme');
+    if (savedMode === 'dark') {
+      document.body.classList.add('dark-mode');
+      document.getElementById('modeToggle').textContent = 'Light Mode';
+    }
+  });
+
+  // Toggle between light and dark mode
+  function toggleMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    document.getElementById('modeToggle').textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+  }
+
+  // Sidebar Toggle
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('active');
+  }
+
+  // Sidebar Navigation
+  const navLinks = document.querySelectorAll('.sidebar a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      navLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      const sectionId = link.getAttribute('href').substring(1);
+      const section = document.getElementById(sectionId);
+      section.scrollIntoView({ behavior: 'smooth' });
+      if (window.innerWidth <= 768) {
+        document.getElementById('sidebar').classList.remove('active');
+      }
+    });
+  });
+
+  // Modal Functions
+  function openModal(title, content) {
+    const modal = document.getElementById('dataModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    modalTitle.innerHTML = title;
+    modalBody.innerHTML = content;
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('dataModal');
+    modal.style.display = 'none';
+    document.getElementById('customersResult').innerHTML = '';
+    document.getElementById('customerDetails').innerHTML = '';
+  }
+
+  document.getElementById('dataModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('dataModal')) {
+      closeModal();
+    }
+  });
+
+  // Redirect if not logged in as admin
+  const role = localStorage.getItem("role");
+  const authHeader = localStorage.getItem("auth");
+
+  if (!authHeader || role !== "admin") {
+    window.location.href = "index.html";
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "index.html";
+  }
+
+  function loadAdmins() {
+    fetch("http://localhost:8080/api/admins", {
+      method: "GET",
+      headers: {
+        "Authorization": `Basic ${authHeader}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
+    })
+    .then(admins => {
+      const tbody = document.querySelector("#adminTable tbody");
+      tbody.innerHTML = "";
+      admins.forEach(admin => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${admin.id}</td>
+          <td>${admin.username}</td>
+          <td><button onclick="deleteAdmin(${admin.id})">Delete</button></td>
+        `;
+      });
+    })
+    .catch(err => {
+      console.error("Error loading admins:", err);
+      alert("Failed to load admins. Please check your login session.");
+    });
+  }
+
+  function deleteAdmin(adminId) {
+    if (!confirm("Are you sure you want to delete this admin?")) return;
+    fetch(`http://localhost:8080/api/admins/${adminId}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Basic ${authHeader}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Failed to delete admin");
+      loadAdmins();
+    })
+    .catch(err => {
+      console.error("Delete error:", err);
+      alert("Failed to delete admin.");
+    });
+  }
+
+  function loadCustomerDetails() {
+    const accNumber = document.getElementById("accountNumber").value.trim();
+    if (!accNumber) {
+      alert("Please enter an account number.");
+      return;
+    }
+    fetch(`http://localhost:8080/api/customers/${accNumber}/details`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Basic ${authHeader}`
+      }
+    })
+    .then(res => res.json())
+    .then(customer => {
+      const content = `
+        <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; margin-top: 20px;">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Name</strong></td>
+              <td>${customer.name}</td>
+            </tr>
+            <tr>
+              <td><strong>Email</strong></td>
+              <td>${customer.email}</td>
+            </tr>
+            <tr>
+              <td><strong>Phone Number</strong></td>
+              <td>${customer.phoneNumber}</td>
+            </tr>
+            <tr>
+              <td><strong>Address</strong></td>
+              <td>${customer.address}</td>
+            </tr>
+            <tr>
+              <td><strong>Bank Account Number</strong></td>
+              <td>${customer.bankAccountNumber}</td>
+            </tr>
+            <tr>
+              <td><strong>IFSC Code</strong></td>
+              <td>${customer.ifscCode}</td>
+            </tr>
+            <tr>
+              <td><strong>Account Type</strong></td>
+              <td>${customer.accountType}</td>
+            </tr>
+            <tr>
+              <td><strong>Balance</strong></td>
+              <td>₹${customer.balance}</td>
+            </tr>
+            <tr>
+              <td><strong>Daily Limit</strong></td>
+              <td>₹${customer.dailyLimit}</td>
+            </tr>
+            <tr>
+              <td><strong>Role</strong></td>
+              <td>${customer.role}</td>
+            </tr>
+            <tr>
+              <td><strong>Created At</strong></td>
+              <td>${new Date(customer.createdAt).toLocaleString()}</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      openModal('Customer Details', content);
+    })
+    .catch(err => {
+      console.error("Error loading customer details:", err);
+      alert("Failed to load customer details.");
+    });
+  }
+
+  function checkBalance() {
+    const accNumber = document.getElementById("balanceAccountNumber").value.trim();
+    if (!accNumber) {
+      alert("Please enter an account number.");
+      return;
+    }
+    fetch(`http://localhost:8080/api/customers/balance/${accNumber}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Basic ${authHeader}`
+      }
+    })
+    .then(res => res.json())
+    .then(balance => {
+      const balanceResultDiv = document.getElementById("balanceResult");
+      balanceResultDiv.innerHTML = `<p>Balance: ₹${balance}</p>`;
+    })
+    .catch(err => {
+      console.error("Error checking balance:", err);
+      alert("Failed to check balance.");
+    });
+  }
+
+  function transferMoney() {
+    const fromAccount = document.getElementById("fromAccount").value.trim();
+    const toAccount = document.getElementById("toAccount").value.trim();
+    const amount = document.getElementById("amount").value.trim();
+    if (!fromAccount || !toAccount || !amount) {
+      alert("Please fill all fields.");
+      return;
+    }
+    const requestData = {
+      fromAccount,
+      toAccount,
+      amount: parseFloat(amount)
+    };
+    fetch("http://localhost:8080/api/customers/transfer", {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${authHeader}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestData)
+    })
+    .then(res => res.json())
+    .then(invoice => {
+      const transferResultDiv = document.getElementById("transferResult");
+      transferResultDiv.innerHTML = `
+        <p>Transaction ID: ${invoice.transactionId}</p>
+        <p>Status: ${invoice.status}</p>
+      `;
+    })
+    .catch(err => {
+      console.error("Error transferring money:", err);
+      alert("Failed to transfer money.\nFrom Acc and To Acc cannot be same");
+    });
+  }
+
+  function depositMoney() {
+    const accountNumber = document.getElementById("depositAccountNumber").value.trim();
+    const amount = document.getElementById("depositAmount").value.trim();
+    if (!accountNumber || !amount) {
+      alert("Please fill all fields.");
+      return;
+    }
+    const requestData = {
+      accountNumber,
+      amount: parseFloat(amount)
+    };
+    fetch("http://localhost:8080/api/customers/deposit", {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${authHeader}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestData)
+    })
+    .then(res => res.text())
+    .then(response => {
+      const depositResultDiv = document.getElementById("depositResult");
+      depositResultDiv.innerHTML = `<p>${response}</p>`;
+    })
+    .catch(err => {
+      console.error("Error depositing money:", err);
+      alert("Failed to deposit money.");
+    });
+  }
+
+  function updateCustomerDetails() {
+    const accNumber = document.getElementById("updateAccountNumber").value.trim();
+    const name = document.getElementById("updatedName").value.trim();
+    const address = document.getElementById("updatedAddress").value.trim();
+    if (!accNumber || !name || !address) {
+      alert("Please fill all fields.");
+      return;
+    }
+    fetch(`http://localhost:8080/api/customers/${accNumber}/update`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Basic ${authHeader}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, address })
+    })
+    .then(res => res.text())
+    .then(response => {
+      document.getElementById("updateCustomerResult").innerHTML = `<p>${response}</p>`;
+    })
+    .catch(err => {
+      console.error("Error updating customer:", err);
+      alert("Failed to update customer details.");
+    });
+  }
+
+  function updateDailyLimit() {
+    const accNumber = document.getElementById("limitAccountNumber").value.trim();
+    const newLimit = document.getElementById("newDailyLimit").value.trim();
+    if (!accNumber || !newLimit) {
+      alert("Please fill all fields.");
+      return;
+    }
+    fetch(`http://localhost:8080/api/customers/${accNumber}/daily-limit`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Basic ${authHeader}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ newLimit: parseFloat(newLimit) })
+    })
+    .then(res => res.text())
+    .then(response => {
+      document.getElementById("updateLimitResult").innerHTML = `<p>${response}</p>`;
+    })
+    .catch(err => {
+      console.error("Error updating limit:", err);
+      alert("Failed to update daily limit.");
+    });
+  }
+
+  function createCustomer() {
+    const balanceElement = document.getElementById("custBalance");
+    if (!balanceElement) {
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:red;">Error: Balance input field not found.</p>`;
+      console.error("Element with ID 'custBalance' not found.");
+      return;
+    }
+    const balanceInput = balanceElement.value;
+    const customer = {
+      name: document.getElementById("custName").value.trim(),
+      email: document.getElementById("custEmail").value.trim(),
+      phoneNumber: document.getElementById("custPhone").value.trim(),
+      address: document.getElementById("custAddress").value.trim(),
+      bankAccountNumber: document.getElementById("custAccountNumber").value.trim(),
+      ifscCode: document.getElementById("custIFSC").value.trim(),
+      accountType: document.getElementById("custAccountType").value,
+      passwordHash: document.getElementById("custPassword").value,
+      balance: balanceInput ? parseFloat(balanceInput) : 0
+    };
+    if (!customer.name || !customer.email || !customer.phoneNumber || !customer.address ||
+        !customer.bankAccountNumber || !customer.ifscCode || !customer.accountType || !customer.passwordHash) {
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:red;">Please fill all required fields.</p>`;
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(customer.email)) {
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:red;">Invalid email format.</p>`;
+      return;
+    }
+    if (!/^\d{10}$/.test(customer.phoneNumber)) {
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:red;">Phone number must be 10 digits.</p>`;
+      return;
+    }
+    if (customer.balance < 0) {
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:red;">Balance cannot be negative.</p>`;
+      return;
+    }
+    console.log("Sending customer data:", customer);
+    fetch('http://localhost:8080/api/customers/create', {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${authHeader}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(customer)
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => {
+          throw new Error(err.message || "Failed to create customer");
+        });
+      }
+      return res.json();
+    })
+    .then(data => {
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:green;">Customer created successfully!</p>`;
+    })
+    .catch(err => {
+      console.error("Error creating customer:", err);
+      document.getElementById("createCustomerResult").innerHTML =
+        `<p style="color:red;">${err.message}</p>`;
+    });
+  }
+
+  function fetchAllCustomers() {
+    fetch("http://localhost:8080/api/admins/viewcustomers", {
+      method: "GET",
+      headers: {
+        "Authorization": `Basic ${authHeader}`
+      }
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("Unauthorized or failed to fetch customers.");
+      }
+      return res.json();
+    })
+    .then(customers => {
+      let content = '';
+      if (customers.length === 0) {
+        content = "<p>No customers found.</p>";
+      } else {
+        content = `<table border="1" cellpadding="8" cellspacing="0" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Account Number</th>
+              <th>Bank Name</th>
+              <th>IFSC Code</th>
+              <th>Account Type</th>
+              <th>Balance (₹)</th>
+              <th>Daily Limit (₹)</th>
+              <th>Created At</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>`;
+        customers.forEach(cust => {
+          content += `
+            <tr>
+              <td>${cust.id}</td>
+              <td>${cust.name}</td>
+              <td>${cust.email}</td>
+              <td>${cust.phoneNumber}</td>
+              <td>${cust.address}</td>
+              <td>${cust.bankAccountNumber}</td>
+              <td>${cust.bankName}</td>
+              <td>${cust.ifscCode}</td>
+              <td>${cust.accountType}</td>
+              <td>${cust.balance.toFixed(2)}</td>
+              <td>${cust.dailyLimit.toFixed(2)}</td>
+              <td>${new Date(cust.createdAt).toLocaleString()}</td>
+              <td>${cust.role}</td>
+            </tr>`;
+        });
+        content += "</tbody></table>";
+      }
+      openModal('All Customers', content);
+    })
+    .catch(err => {
+      console.error("Error fetching customers:", err);
+      alert("Failed to fetch customers.");
+    });
+  }
+
+  async function fetchAdminTransactions() {
+    const adminId = '1234567890123456';
+    const apiUrl = `http://localhost:8080/api/admins/${adminId}/transactions?page=0&size=10&sortBy=date&direction=desc`;
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${localStorage.getItem('auth')}`
+        }
+      });
+
+      if (!response.ok) {
+        let errorMessage = `Failed to fetch admin transactions. Status: ${response.status}`;
+        try {
+          const errorBody = await response.json();
+          if (errorBody && errorBody.message) {
+            errorMessage += ` - ${errorBody.message}`;
+          }
+        } catch (e) {
+          console.error("Error parsing error response:", e);
+        }
+        console.error('❌ Error fetching admin transactions:', errorMessage);
+        alert(errorMessage);
+        return;
+      }
+
+      const transactions = await response.json();
+      console.log('✅ Admin transactions:', transactions);
+
+      const tableBody = document.getElementById('transactionTableBody');
+      tableBody.innerHTML = '';
+
+      if (!transactions || !Array.isArray(transactions.content) || transactions.content.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No admin transactions found.</td></tr>';
+        showTransactionCard();
+        return;
+      }
+
+      transactions.content.forEach(tx => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${tx.id || '-'}</td>
+          <td>${tx.transactionId || '-'}</td>
+          <td>${tx.fromAccount || '-'}</td>
+          <td>${tx.toAccount || '-'}</td>
+          <td>₹${tx.amount ? parseFloat(tx.amount).toFixed(2) : '-'}</td>
+          <td>${tx.transactionDate || '-'}</td>
+          <td>${tx.transactionType || '-'}</td>
+          <td>${tx.status || '-'}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      showTransactionCard();
+
+    } catch (error) {
+      console.error('❌ Error fetching admin transactions:', error);
+      alert('An unexpected error occurred while fetching admin transactions.');
+    }
+  }
+</script>
+</body>
+</html>
